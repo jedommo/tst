@@ -1,68 +1,17 @@
-import requests
-import json
+import telebot
 
-# Replace these with your actual API details
-API_URL = "https://your-dhru-fusion-url.com/api"
-API_USERNAME = "your_api_username"
-API_KEY = "your_api_key"
+# ضع هنا مفتاح API الخاص بالبوت الخاص بك
+API_TOKEN = "1687364449:AAGai4ClSHNo2Di5sKyvc_PudTVYRfBsmC4"
 
-# Function to make API calls
-def dhru_fusion_api_call(api_module, parameters=None):
-    """
-    Make API calls to Dhru Fusion 2
-    :param api_module: The module to call (e.g., placeorder, orderstatus)
-    :param parameters: The data to send in the request
-    :return: Response JSON
-    """
-    headers = {
-        "Content-Type": "application/json"
-    }
+# إنشاء كائن البوت
+bot = telebot.TeleBot(API_TOKEN)
 
-    payload = {
-        "username": API_USERNAME,
-        "api_key": API_KEY,
-        "action": api_module,
-        "parameters": parameters or {}
-    }
+# معالجة رسالة النصوص
+@bot.message_handler(func=lambda message: True)
+def echo_all(message):
+    # إرسال نفس النص المستلم كإجابة
+    bot.reply_to(message, f"لقد أرسلت: {message.text}")
 
-    try:
-        response = requests.post(API_URL, headers=headers, json=payload)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"API request failed: {e}")
-        return None
-
-# Example 1: Place an order
-def place_order(service_id, imei, custom_fields=None):
-    parameters = {
-        "service_id": service_id,  # Replace with your service ID
-        "imei": imei,
-    }
-    if custom_fields:
-        parameters["custom_fields"] = custom_fields
-
-    return dhru_fusion_api_call("placeorder", parameters)
-
-# Example 2: Check order status
-def get_order_status(order_id):
-    parameters = {
-        "order_id": order_id  # Replace with your order ID
-    }
-
-    return dhru_fusion_api_call("orderstatus", parameters)
-
-# Testing the functions
-if name == "main":
-    # Replace these with actual test data
-    test_service_id = 1234
-    test_imei = "123456789012345"
-    test_order_id = 5678
-
-    print("Placing an order...")
-    order_response = place_order(test_service_id, test_imei)
-    print(json.dumps(order_response, indent=4))
-
-    print("\nFetching order status...")
-    status_response = get_order_status(test_order_id)
-    print(json.dumps(status_response, indent=4))
+# بدء تشغيل البوت
+print("البوت يعمل الآن...")
+bot.polling()
